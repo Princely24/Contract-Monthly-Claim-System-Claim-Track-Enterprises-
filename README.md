@@ -198,3 +198,24 @@ List of Users:
 ⦁	Track Claim Status: The system lets lecturers monitor the status of their submissions until they are settled, offering clear tracking of claim statuses. 
 
 ⦁	Consistent and Reliable Information: By guaranteeing that all data shown is correct and current, the system improves consistency and dependability. 
+4. Assumptions and Constraints 
+
+4.1 Assumptions 
+
+1.	Presenters are in charge of putting out their own assertions. 
+
+2.	The Program Coordinator and the Academic Manager both examine and approve claims. 
+
+3.	The system will take care of basic validation, including making sure the number of hours worked is within a fair range. 
+
+4.2 Constraints:  
+
+1.	The system needs to be simple to use and intuitive in order to reduce the need for training. 
+
+2.	Sensitive information (such as lecturer details and claim amounts) needs to be protected by security procedures. 
+
+3.	A growing number of users and claims should be supported by the system's scalability. 
+
+In conclusion 
+
+IC lecturers' claim filing and approval processes will be streamlined with the help of the Contract Monthly Claim System, a state-of-the-art, user-friendly.NET program. Effective data administration is facilitated by the database structure, and different user roles can easily navigate the user interface thanks to the GUI. A dependable and efficient tool for managing claims is ensured by giving careful consideration to security, performance, and compliance during the system's construction. 
