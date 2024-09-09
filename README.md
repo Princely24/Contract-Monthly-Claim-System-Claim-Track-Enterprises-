@@ -123,3 +123,78 @@ ApprovalDate (DATETIME)
 ApprovalStatus (ENUM: 'Pending', 'Approved', 'Rejected') 
 
 Comments (TEXT) 
+Relationships 
+
+Lecturers ↔ Claims 
+
+One-to-Many: One Lecturer can have multiple Claims. 
+
+Claims ↔ SupportingDocuments 
+
+One-to-Many: One Claim can have multiple SupportingDocuments. 
+
+Claims ↔ ClaimApprovals 
+
+One-to-One or One-to-Many: One Claim can have one Approval record by one Academic Manager 
+
+AcademicManagers ↔ ClaimApprovals 
+
+One-to-Many: One Academic Manager can approve multiple Claims. 
+
+3. GUI Design 
+
+The main pages and elements of the GUI's design are as follows: 
+
+3.1 The Dashboard for Users 
+
+Secure user authentication on the login page. 
+
+Home Page: Provides options (such as submit claim, view claims, etc.) according to the role of the user. 
+
+Form for Claim Submission: 
+
+⦁	inputs for month/year, hourly rate, and hours worked. 
+
+⦁	The ability to upload supporting papers. 
+
+⦁	Click the "Submit" button to validate. 
+
+3.2 Handling of Claims 
+
+List of Claims: 
+
+⦁	table showing filed claims along with status indications. 
+
+⦁	filters to display claims according to the user, date range, or status. 
+
+Page of Claim Details: 
+
+⦁	a thorough look at a particular claim, complete with hours performed, total cost, and any supporting documentation. 
+
+⦁	The Academic Manager and Program Coordinator positions have approve/reject buttons. 
+
+3.3 Reporting:  
+
+⦁	Select a report generation option based on a user, claim status, or date range. 
+
+⦁	The ability to export reports in Excel or PDF format. 
+
+3.4 User Administration (Administrators Only) 
+
+List of Users: 
+
+⦁	View and control the roles and details of users. 
+
+⦁	choices for adding or deleting people. 
+
+3.5 Important Elements 
+
+⦁	Submit Claims: After providing the required information and attaching supporting documentation, lecturers can quickly and simply submit their claims with a single click. 
+
+⦁	Verify and Approve Claims: Using a simplified interface, program coordinators and academic managers can expeditiously verify and approve claims. 
+
+⦁	Lecturers can include supporting documentation with their assertions by uploading them, which makes sure that all the information needed is accessible for examination. 
+
+⦁	Track Claim Status: The system lets lecturers monitor the status of their submissions until they are settled, offering clear tracking of claim statuses. 
+
+⦁	Consistent and Reliable Information: By guaranteeing that all data shown is correct and current, the system improves consistency and dependability. 
