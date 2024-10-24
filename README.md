@@ -1,221 +1,184 @@
-# Contract-Monthly-Claim-System-Claim-Track-Enterprises-
-Documentation  
+### Contract Monthly Claim System (CMCS) - Claim Track Enterprises  
+#### Documentation
+
+---
 
-1. Design Decisions 
+### 1. Design Decisions
 
-1.1 Essential Functions 
+#### 1.1 Essential Functions
 
-Claim Submission: The ability to submit monthly claims that include information about the number of hours worked and hourly rates is required of IC lecturers. 
+1. **Claim Submission**:  
+   IC lecturers are required to submit monthly claims detailing hours worked and hourly rates. 
+   
+2. **Approval Process**:  
+   Claims must be reviewed and approved by both the **Academic Manager** and the **Program Coordinator**. 
+
+3. **Document Upload**:  
+   IC lecturers have the option to upload supporting documents to validate their claims. 
+
+4. **Reporting**:  
+   Administrators can generate summary and detailed reports about claims. 
 
-Approval Process: The Academic Manager and the Program Coordinator should jointly examine and approve claims. 
+#### 1.2 Technical Framework
+
+- **Frontend**:  
+  The graphical user interface (GUI) is web-based, built using ASP.NET Core with Razor Pages and WPF for rendering dynamic content.
+
+- **Backend**:  
+  The application logic and business rules are implemented using C# and .NET Core.
 
-Document Upload: IC instructors have the option to upload documents that bolster their assertions. 
+- **Database**:  
+  **Microsoft SQL Server** stores user data, supporting documents, and claim specifics.
 
-Reporting: Claims reports, including summaries and in-depth views, ought to be produced by administrators. 
+- **Authentication**:  
+  **ASP.NET Identity** manages secure user authentication and role administration.
 
-1.2 The Technical Framework 
+---
 
-Frontend: Razor Pages is used to render dynamic content while developing a web-based graphical user interface with ASP.NET Core WPF. 
+### 2. Database Structure
 
-Backend: Application logic and business rules are implemented in C# using.NET Core. 
+The CMCS database is designed for efficient storage, retrieval, and management of claim-related data. The following tables are fundamental to the system:
 
-Database: Microsoft SQL Server is used to store user data, supporting documentation, and claim specifics. 
+#### 2.1 Tables
 
-Authentication: Role administration and safe user authentication are provided by ASP.NET Identity. 
-2. Structure of Databases 
+1. **Lecturers**  
+   Stores information about lecturers submitting claims.
 
-The CMCS database is made to guarantee effective data administration, retrieval, and storage. It has the following crucial tables: 
+   | Column        | Data Type    | Description                    |
+   |---------------|--------------|--------------------------------|
+   | LecturerID    | INT (PK)     | Auto-incrementing primary key  |
+   | FirstName     | VARCHAR      | Lecturer's first name          |
+   | LastName      | VARCHAR      | Lecturer's last name           |
+   | Email         | VARCHAR      | Lecturer's email address       |
+   | Phone         | VARCHAR      | Lecturer's phone number        |
+   | Department    | VARCHAR      | Lecturer's department          |
 
-2.1. Tables 
+2. **Claims**  
+   Tracks the claims submitted by lecturers.
 
-1. Lecturers 
+   | Column        | Data Type    | Description                                             |
+   |---------------|--------------|---------------------------------------------------------|
+   | ClaimID       | INT (PK)     | Auto-incrementing primary key                           |
+   | LecturerID    | INT (FK)     | Foreign key from the `Lecturers` table                  |
+   | ClaimDate     | DATETIME     | Date of the claim submission                            |
+   | Amount        | DECIMAL      | Total claim amount                                      |
+   | Description   | TEXT         | Description or notes on the claim                       |
+   | Status        | ENUM         | 'Pending', 'Approved', 'Rejected', 'Settled'            |
+   | SubmissionDate| DATETIME     | Date the claim was submitted (using `GETDATE()`)        |
 
-Stores information about the lecturers who will be submitting claims. 
+3. **SupportingDocuments**  
+   Stores uploaded documents for claims.
 
-LecturerID (Primary Key, INT, Auto Increment) 
+   | Column        | Data Type    | Description                                             |
+   |---------------|--------------|---------------------------------------------------------|
+   | DocumentID    | INT (PK)     | Auto-incrementing primary key                           |
+   | ClaimID       | INT (FK)     | Foreign key from the `Claims` table                     |
+   | DocumentPath  | VARCHAR      | File path of the uploaded document                      |
+   | UploadDate    | DATETIME     | Date the document was uploaded                          |
+   | DocumentType  | VARCHAR      | Type of the document (e.g., .pdf, .docx, .xlsx)         |
 
-FirstName (VARCHAR) 
+4. **ProgrammeCoordinators**  
+   Contains information about coordinators who verify claims.
 
-LastName (VARCHAR) 
+   | Column        | Data Type    | Description                                             |
+   |---------------|--------------|---------------------------------------------------------|
+   | CoordinatorID | INT (PK)     | Auto-incrementing primary key                           |
+   | FirstName     | VARCHAR      | Coordinator's first name                                |
+   | LastName      | VARCHAR      | Coordinator's last name                                 |
+   | Email         | VARCHAR      | Coordinator's email                                     |
+   | Phone         | VARCHAR      | Coordinator's phone number                              |
+   | Department    | VARCHAR      | Coordinator's department                                |
 
-Email (VARCHAR) 
+5. **AcademicManagers**  
+   Stores information about managers who approve claims.
 
-Phone (VARCHAR) 
+   | Column        | Data Type    | Description                                             |
+   |---------------|--------------|---------------------------------------------------------|
+   | ManagerID     | INT (PK)     | Auto-incrementing primary key                           |
+   | FirstName     | VARCHAR      | Manager's first name                                    |
+   | LastName      | VARCHAR      | Manager's last name                                     |
+   | Email         | VARCHAR      | Manager's email address                                 |
+   | Phone         | VARCHAR      | Manager's phone number                                  |
+   | Department    | VARCHAR      | Manager's department                                    |
 
-Department (VARCHAR) 
+6. **ClaimApprovals**  
+   Tracks the approval process of claims by academic managers.
 
-2. Claim 
+   | Column        | Data Type    | Description                                             |
+   |---------------|--------------|---------------------------------------------------------|
+   | ApprovalID    | INT (PK)     | Auto-incrementing primary key                           |
+   | ClaimID       | INT (FK)     | Foreign key from the `Claims` table                     |
+   | ApproverID    | INT (FK)     | Foreign key from the `AcademicManagers` table           |
+   | ApprovalDate  | DATETIME     | Date the claim was approved/rejected                    |
+   | ApprovalStatus| ENUM         | 'Pending', 'Approved', 'Rejected'                       |
+   | Comments      | TEXT         | Additional comments from the approver                   |
 
-Tracks the claims submitted by lecturers. 
+#### 2.2 Relationships
 
-ClaimID (Primary Key, INT, Auto Increment) 
+- **Lecturers ↔ Claims**:  
+  One lecturer can submit multiple claims (One-to-Many).
 
-LecturerID (Foreign Key, INT, references Lecturers.LecturerID) 
+- **Claims ↔ SupportingDocuments**:  
+  One claim can have multiple supporting documents (One-to-Many).
 
-ClaimDate (DATETIME) 
+- **Claims ↔ ClaimApprovals**:  
+  One claim can have one approval record by one academic manager (One-to-One or One-to-Many).
 
-Amount (DECIMAL) 
+- **AcademicManagers ↔ ClaimApprovals**:  
+  One academic manager can approve multiple claims (One-to-Many).
 
-Description (TEXT) 
+---
 
-Status (ENUM: 'Pending', 'Approved', 'Rejected', 'Settled') 
+### 3. GUI Design
 
-SubmissionDate (DATETIME) 
+#### 3.1 User Dashboard
 
-3. SupportingDocuments 
+- **Login Page**: Secure user authentication.
+- **Home Page**: Options based on the user’s role (submit claim, view claims, etc.).
+- **Claim Submission Form**:  
+  - Fields for entering month/year, hourly rate, and hours worked.
+  - Ability to upload supporting documents.
+  - Prominent "Submit" button for claim validation.
 
-Stores information about the documents uploaded for each claim. 
+#### 3.2 Claim Management
 
-DocumentID (Primary Key, INT, Auto Increment) 
+- **List of Claims**:  
+  - Displays claims with status indicators.
+  - Filters for user, date range, or claim status.
+  
+- **Claim Details Page**:  
+  - Displays specific claim details (hours, total cost, supporting documents).
+  - Approve/Reject buttons for Academic Manager and Program Coordinator.
 
-ClaimID (Foreign Key, INT, references Claims.ClaimID) 
+#### 3.3 Reporting
 
-DocumentPath (VARCHAR) 
+- Ability to generate reports based on user, claim status, or date range.
+- Export options for Excel and PDF.
 
-UploadDate (DATETIME) 
+#### 3.4 User Management (Admin Only)
 
-DocumentType (VARCHAR) 
+- **User List**:  
+  - View and manage users' roles and details.
+  - Add or delete users.
 
-4. ProgrammeCoordinators 
+---
 
-Information about programme coordinators who verify claims. 
+### 4. Assumptions and Constraints
 
-CoordinatorID (Primary Key, INT, Auto Increment) 
+#### 4.1 Assumptions
 
-FirstName (VARCHAR) 
+1. Lecturers are responsible for submitting their own claims.
+2. Both the Program Coordinator and Academic Manager review claims.
+3. Basic validation will be performed (e.g., ensuring the number of hours is reasonable).
 
-LastName (VARCHAR) 
+#### 4.2 Constraints
 
-Email (VARCHAR) 
+1. The system must be user-friendly, minimizing the need for training.
+2. Sensitive data (lecturer info, claim amounts) must be secured.
+3. The system should scale to accommodate increasing users and claims.
 
-Phone (VARCHAR) 
+---
 
-Department (VARCHAR) 
+### Conclusion
 
-5. AcademicManagers 
-
-Information about academic managers who approve or reject claims. 
-
-ManagerID (Primary Key, INT, Auto Increment) 
-
-FirstName (VARCHAR) 
-
-LastName (VARCHAR) 
-
-Email (VARCHAR) 
-
-Phone (VARCHAR) 
-
-Department (VARCHAR) 
-
-6. ClaimApprovals 
-
-Tracks the approval process for claims. 
-
-ApprovalID (Primary Key, INT, Auto Increment) 
-
-ClaimID (Foreign Key, INT, references Claims.ClaimID) 
-
-ApproverID (Foreign Key, INT, references AcademicManagers.ManagerID) 
-
-ApprovalDate (DATETIME) 
-
-ApprovalStatus (ENUM: 'Pending', 'Approved', 'Rejected') 
-
-Comments (TEXT) 
-Relationships 
-
-Lecturers ↔ Claims 
-
-One-to-Many: One Lecturer can have multiple Claims. 
-
-Claims ↔ SupportingDocuments 
-
-One-to-Many: One Claim can have multiple SupportingDocuments. 
-
-Claims ↔ ClaimApprovals 
-
-One-to-One or One-to-Many: One Claim can have one Approval record by one Academic Manager 
-
-AcademicManagers ↔ ClaimApprovals 
-
-One-to-Many: One Academic Manager can approve multiple Claims. 
-
-3. GUI Design 
-
-The main pages and elements of the GUI's design are as follows: 
-
-3.1 The Dashboard for Users 
-
-Secure user authentication on the login page. 
-
-Home Page: Provides options (such as submit claim, view claims, etc.) according to the role of the user. 
-
-Form for Claim Submission: 
-
-⦁	inputs for month/year, hourly rate, and hours worked. 
-
-⦁	The ability to upload supporting papers. 
-
-⦁	Click the "Submit" button to validate. 
-
-3.2 Handling of Claims 
-
-List of Claims: 
-
-⦁	table showing filed claims along with status indications. 
-
-⦁	filters to display claims according to the user, date range, or status. 
-
-Page of Claim Details: 
-
-⦁	a thorough look at a particular claim, complete with hours performed, total cost, and any supporting documentation. 
-
-⦁	The Academic Manager and Program Coordinator positions have approve/reject buttons. 
-
-3.3 Reporting:  
-
-⦁	Select a report generation option based on a user, claim status, or date range. 
-
-⦁	The ability to export reports in Excel or PDF format. 
-
-3.4 User Administration (Administrators Only) 
-
-List of Users: 
-
-⦁	View and control the roles and details of users. 
-
-⦁	choices for adding or deleting people. 
-
-3.5 Important Elements 
-
-⦁	Submit Claims: After providing the required information and attaching supporting documentation, lecturers can quickly and simply submit their claims with a single click. 
-
-⦁	Verify and Approve Claims: Using a simplified interface, program coordinators and academic managers can expeditiously verify and approve claims. 
-
-⦁	Lecturers can include supporting documentation with their assertions by uploading them, which makes sure that all the information needed is accessible for examination. 
-
-⦁	Track Claim Status: The system lets lecturers monitor the status of their submissions until they are settled, offering clear tracking of claim statuses. 
-
-⦁	Consistent and Reliable Information: By guaranteeing that all data shown is correct and current, the system improves consistency and dependability. 
-4. Assumptions and Constraints 
-
-4.1 Assumptions 
-
-1.	Presenters are in charge of putting out their own assertions. 
-
-2.	The Program Coordinator and the Academic Manager both examine and approve claims. 
-
-3.	The system will take care of basic validation, including making sure the number of hours worked is within a fair range. 
-
-4.2 Constraints:  
-
-1.	The system needs to be simple to use and intuitive in order to reduce the need for training. 
-
-2.	Sensitive information (such as lecturer details and claim amounts) needs to be protected by security procedures. 
-
-3.	A growing number of users and claims should be supported by the system's scalability. 
-
-In conclusion 
-
-IC lecturers' claim filing and approval processes will be streamlined with the help of the Contract Monthly Claim System, a state-of-the-art, user-friendly.NET program. Effective data administration is facilitated by the database structure, and different user roles can easily navigate the user interface thanks to the GUI. A dependable and efficient tool for managing claims is ensured by giving careful consideration to security, performance, and compliance during the system's construction. 
+The **Contract Monthly Claim System (CMCS)** aims to streamline the submission and approval process for IC lecturers’ claims. Built on .NET, with a well-structured database and user-friendly GUI, it provides efficient management of claim data, approval workflows, and reporting while ensuring security and scalability.
